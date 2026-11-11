@@ -1,0 +1,102 @@
+*** Begin Patch
+*** Update File: apps/mobile/src/screens/HomeScreen.tsx
+@@
+ import { useEffect, useMemo, useRef, useState } from "react";
+ import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+-import { fetchGlobalMarket, fetchMarketAlerts, fetchMexicoMarket, fetchSummary } from "../api/marketsApi";
++import { fetchGlobalMarket, fetchMarketAlerts, fetchSummary } from "../api/marketsApi";
+ import { ALERT_THRESHOLD, ENABLE_REMOTE_PUSH } from "../config";
+ import { MarketCard } from "../components/MarketCard";
+ import { registerRemotePush } from "../notifications/marketAlerts";
+ import { InstrumentQuote, PricePoint, SummaryResponse } from "../types";
+-
+-type Segment = "global" | "mx";
+@@
+ export function HomeScreen() {
+-  const [segment, setSegment] = useState<Segment>("mx");
+   const [loading, setLoading] = useState(true);
+   const [items, setItems] = useState<InstrumentQuote[]>([]);
+   const [summary, setSummary] = useState<SummaryResponse | null>(null);
+@@
+-  const title = useMemo(() => (segment === "mx" ? "Mercado Mexico" : "Mercado Global"), [segment]);
++  const title = "Mercado Global (USD)";
+@@
+       const [summaryResult, marketResult, alertsResult] = await Promise.all([
+         fetchSummary(),
+-        segment === "mx" ? fetchMexicoMarket() : fetchGlobalMarket(),
+-        fetchMarketAlerts(segment, ALERT_THRESHOLD, ALERT_LIMIT)
++        fetchGlobalMarket(),
++        fetchMarketAlerts("global", ALERT_THRESHOLD, ALERT_LIMIT)
+       ]);
+@@
+       try {
+-        const registered = await registerRemotePush(["mx", "global"]);
++        const registered = await registerRemotePush(["global"]);
+         setPushStatus(registered ? "on" : "off");
+       } catch {
+         setPushStatus("off");
+@@
+   useEffect(() => {
+     void loadData(true);
+@@
+     return () => {
+       clearInterval(intervalId);
+     };
+-  }, [segment]);
++  }, []);
+@@
+     <ScrollView contentContainerStyle={styles.container}>
+       <Text style={styles.title}>Bolsa Pulse</Text>
+-      <Text style={styles.subtitle}>Monitoreo movil con separacion MX / Global</Text>
+-
+-      <View style={styles.segmentRow}>
+-        <Pressable style={[styles.segmentButton, segment === "mx" && styles.segmentButtonActive]} onPress={() => setSegment("mx")}>
+-          <Text style={styles.segmentLabel}>Mexico</Text>
+-        </Pressable>
+-        <Pressable
+-          style={[styles.segmentButton, segment === "global" && styles.segmentButtonActive]}
+-          onPress={() => setSegment("global")}
+-        >
+-          <Text style={styles.segmentLabel}>Global</Text>
+-        </Pressable>
+-      </View>
++      <Text style={styles.subtitle}>Monitoreo movil del mercado global en dolares estadounidenses</Text>
+@@
+       {summary ? (
+         <View style={styles.summaryCard}>
+           <Text style={styles.summaryTitle}>Resumen rapido</Text>
+-          <Text style={styles.summaryText}>
+-            MX: {summary.mexico.gainers} al alza / {summary.mexico.losers} a la baja
+-          </Text>
+           <Text style={styles.summaryText}>
+             Global: {summary.global.gainers} al alza / {summary.global.losers} a la baja
+           </Text>
+@@
+   subtitle: {
+     color: "#8b949e",
+     marginTop: 4,
+     marginBottom: 14
+   },
+-  segmentRow: {
+-    flexDirection: "row",
+-    marginBottom: 14,
+-    gap: 10
+-  },
+-  segmentButton: {
+-    flex: 1,
+-    backgroundColor: "#161b22",
+-    borderWidth: 1,
+-    borderColor: "#30363d",
+-    borderRadius: 10,
+-    paddingVertical: 10,
+-    alignItems: "center"
+-  },
+-  segmentButtonActive: {
+-    borderColor: "#58a6ff",
+-    backgroundColor: "#1f2a38"
+-  },
+-  segmentLabel: {
+-    color: "#f0f6fc",
+-    fontWeight: "700"
+-  },
+*** End Patch

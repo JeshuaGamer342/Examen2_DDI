@@ -1,0 +1,45 @@
+﻿*** Begin Patch
+*** Update File: C:/Users/perez/bolsa-pulse/apps/mobile/src/components/MarketCard.tsx
+@@
+ import { InstrumentQuote } from "../types";
+-import { StyleSheet, Text, View } from "react-native";
++import { Pressable, StyleSheet, Text, View } from "react-native";
+ 
+ interface MarketCardProps {
+   item: InstrumentQuote;
++  selected?: boolean;
++  onPress?: () => void;
+ }
+ 
+-export function MarketCard({ item }: MarketCardProps) {
++export function MarketCard({ item, selected = false, onPress }: MarketCardProps) {
+   const isPositive = item.changePercent >= 0;
+ 
+   return (
+-    <View style={styles.card}>
++    <Pressable onPress={onPress} style={[styles.card, selected && styles.cardSelected]}>
+       <View>
+         <Text style={styles.symbol}>{item.symbol}</Text>
+         <Text style={styles.name}>{item.name}</Text>
+       </View>
+@@
+         </Text>
+       </View>
+-    </View>
++    </Pressable>
+   );
+ }
+@@
+   card: {
+     backgroundColor: "#161b22",
+     borderWidth: 1,
+@@
+     justifyContent: "space-between",
+     alignItems: "center"
+   },
++  cardSelected: {
++    borderColor: "#58a6ff",
++    backgroundColor: "#1f2a38"
++  },
+   symbol: {
+*** End Patch

@@ -1,0 +1,13 @@
+{
+  "name": "bolsa-pulse",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev -w apps/api",
+    "dev:mobile": "npm run dev -w apps/mobile",
+    "dev:watch": "npm run dev -w apps/watch"
+  }
+}

@@ -1,0 +1,12 @@
+﻿{
+  "expo": {
+    "name": "Bolsa Pulse Watch",
+    "slug": "bolsa-pulse-watch",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  }
+}
